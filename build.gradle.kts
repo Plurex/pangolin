@@ -1,12 +1,15 @@
 plugins {
     kotlin("jvm") version "1.5.10"
     id("java-test-fixtures")
+    id("com.palantir.git-version") version "0.12.3"
     `maven-publish`
     id("com.jfrog.artifactory") version "4.21.0"
 }
 
+val gitVersion: groovy.lang.Closure<String> by extra
+
 group = "io.plurex"
-version = "1.0-SNAPSHOT"
+version = gitVersion().replace(".dirty", "")
 
 repositories {
     mavenCentral()
