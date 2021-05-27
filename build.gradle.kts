@@ -1,6 +1,8 @@
 plugins {
     kotlin("jvm") version "1.5.10"
     id("java-test-fixtures")
+    `maven-publish`
+    id("com.jfrog.artifactory") version "4.21.0"
 }
 
 group = "io.plurex"
@@ -73,4 +75,30 @@ tasks {
     test {
         useJUnitPlatform()
     }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("plurexPangolin") {
+            groupId = "io.plurex"
+            artifactId = "pangolin"
+            version = version
+        }
+    }
+}
+
+artifactory {
+    setContextUrl("https://plurex.jfrog.io/artifactory")
+    publish(delegateClosureOf<org.jfrog.gradle.plugin.artifactory.dsl.PublisherConfig> {
+        repository(delegateClosureOf<org.jfrog.gradle.plugin.artifactory.dsl.DoubleDelegateWrapper> {
+            setProperty("repoKey", "io.plurex.pangolin")
+            setProperty("username", System.getenv("JFROG_USER"))
+            setProperty("password", System.getenv("JFROG_PASSWORD"))
+            setProperty("maven", true)
+        })
+        defaults(delegateClosureOf<org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask> {
+            publications("plurexPangolin")
+        })
+    })
+
 }
