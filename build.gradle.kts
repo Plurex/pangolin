@@ -32,13 +32,13 @@ dependencies {
     implementation("org.jetbrains.kotlin", "kotlin-reflect", kotlinVersion)
     implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", kotlinXVersion)
 
-    api("joda-time", "joda-time", jodaVersion)
+    implementation("joda-time", "joda-time", jodaVersion)
 
     //Config
-    api("io.github.config4k", "config4k", "0.4.1")
+    implementation("io.github.config4k", "config4k", "0.4.1")
 
     //Logging
-    api("org.slf4j", "slf4j-api", slf4jVersion)
+    implementation("org.slf4j", "slf4j-api", slf4jVersion)
 
     testFixturesImplementation("io.mockk", "mockk", mockkVersion)
     testFixturesImplementation("org.jetbrains.kotlin", "kotlin-reflect", kotlinVersion)
