@@ -80,12 +80,19 @@ tasks {
     }
 }
 
+val sourcesJar by tasks.creating(Jar::class) {
+    archiveClassifier.set("sources")
+    from(sourceSets.getByName("main").allSource)
+}
+
 publishing {
     publications {
         create<MavenPublication>("plurexPangolin") {
             groupId = "io.plurex"
             artifactId = "pangolin"
             version = version
+            from(components["java"])
+            artifact(sourcesJar)
         }
     }
 }
