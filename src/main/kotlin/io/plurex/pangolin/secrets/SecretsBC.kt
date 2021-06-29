@@ -21,6 +21,7 @@ private fun cipher(opMode: Int, secretKey: String, instance: String = AES): Ciph
     return c
 }
 
+@Deprecated("Use SecretsAES")
 class SecretsBC(secretKey: String) : SecretsAPI {
 
     private val encryptCypher = cipher(Cipher.ENCRYPT_MODE, secretKey)

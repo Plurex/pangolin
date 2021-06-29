@@ -33,6 +33,10 @@ fun randString(): String {
     return "GENERATED${random.nextInt().absoluteValue}"
 }
 
+fun randText(): String {
+    return List(randRange(1, 200)) { randString() }.joinToString()
+}
+
 fun randLong(): Long {
     return random.nextLong()
 }
