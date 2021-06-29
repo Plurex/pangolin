@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.5.10"
+    kotlin("plugin.serialization") version "1.5.10"
     id("java-test-fixtures")
     id("com.palantir.git-version") version "0.12.3"
     `maven-publish`
@@ -31,6 +32,7 @@ dependencies {
     implementation(kotlin(kotlinStdlibVersion))
     implementation("org.jetbrains.kotlin", "kotlin-reflect", kotlinVersion)
     implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", kotlinXVersion)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerializationVersion")
 
     implementation("joda-time", "joda-time", jodaVersion)
 

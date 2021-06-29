@@ -1,5 +1,7 @@
 package io.plurex.pangolin.validation
 
+import kotlinx.serialization.Serializable
+
 interface Validatable {
 
     /**
@@ -25,10 +27,12 @@ data class ValidationErrorException(
 /**
  * Data object to represent the data of an Exception. Convenient for serialization.
  */
+@Serializable
 data class ValidationErrors(
     val errors: List<ValidationError>
 )
 
+@Serializable
 data class ValidationError(
     val path: List<String>,
     val message: String
