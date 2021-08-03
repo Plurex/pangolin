@@ -11,9 +11,14 @@ internal class SecretsAESTest {
 
     @Test
     fun `encrypt - decrypt`() {
+        encryptDecryptHelper(EncryptionAlgo.AesCbcPadding)
+        encryptDecryptHelper(EncryptionAlgo.Aes)
+    }
+
+    private fun encryptDecryptHelper(algo: EncryptionAlgo) {
         for (i in 0..20) {
             val key = generateSecretKey(randEnum())
-            val testObj = SecretsAES(key)
+            val testObj = SecretsAES(key, algo)
             val original = randText()
             val encrypted = testObj.encrypt(original)
 

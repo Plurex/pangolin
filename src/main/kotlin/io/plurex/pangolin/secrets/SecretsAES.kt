@@ -28,32 +28,64 @@ fun importSecretKey(key: String): SecretKey {
 }
 
 class SecretsAES(
-    key: SecretKey
+    key: SecretKey,
+    algo: EncryptionAlgo = EncryptionAlgo.AesCbcPadding
 ) : SecretsAPI {
 
-    private val iv = IvParameterSpec(key.encoded.sliceArray(0 until 16))
-    private val encryptCypher = cipher(Cipher.ENCRYPT_MODE, key, iv)
-    private val decryptCypher = cipher(Cipher.DECRYPT_MODE, key, iv)
+    private val encryptCipher = algo.encryptCipher(key)
+    private val decryptCipher = algo.decryptCipher(key)
 
 
     override fun encrypt(inData: String): String {
-        val encrypted = encryptCypher.doFinal(inData.toByteArray(Charsets.UTF_8))
+        val encrypted = encryptCipher.doFinal(inData.toByteArray(Charsets.UTF_8))
         return String(encoder.encode(encrypted))
     }
 
     override fun decrypt(encrypted: String): String {
         val byteStr = decoder.decode(encrypted.toByteArray(Charsets.UTF_8))
-        return String(decryptCypher.doFinal(byteStr))
+        return String(decryptCipher.doFinal(byteStr))
     }
-}
-
-private fun cipher(opMode: Int, secretKey: SecretKey, iv: IvParameterSpec): Cipher {
-    val c = Cipher.getInstance(AES_WITH_PADDING)
-    c.init(opMode, secretKey, iv)
-    return c
 }
 
 private const val AES_WITH_PADDING = "AES/CBC/PKCS5Padding"
 private const val AES = "AES"
 private val encoder = Base64.getEncoder()
 private val decoder = Base64.getDecoder()
+
+
+fun main() {
+    println(generateSecretKey(KeySize.BITS_256).export())
+}
+
+sealed class EncryptionAlgo {
+    abstract fun encryptCipher(key: SecretKey): Cipher
+    abstract fun decryptCipher(key: SecretKey): Cipher
+
+    object AesCbcPadding : EncryptionAlgo() {
+
+        override fun encryptCipher(key: SecretKey) = cipher(Cipher.ENCRYPT_MODE, key)
+
+        override fun decryptCipher(key: SecretKey) = cipher(Cipher.DECRYPT_MODE, key)
+
+        private fun cipher(opMode: Int, secretKey: SecretKey): Cipher {
+            val iv = IvParameterSpec(secretKey.encoded.sliceArray(0 until 16))
+            val c = Cipher.getInstance(AES_WITH_PADDING)
+            c.init(opMode, secretKey, iv)
+            return c
+        }
+    }
+
+    object Aes : EncryptionAlgo() {
+        override fun encryptCipher(key: SecretKey): Cipher {
+            val instance = Cipher.getInstance(AES)
+            instance.init(Cipher.ENCRYPT_MODE, key)
+            return instance
+        }
+
+        override fun decryptCipher(key: SecretKey): Cipher {
+            val instance = Cipher.getInstance(AES)
+            instance.init(Cipher.DECRYPT_MODE, key)
+            return instance
+        }
+    }
+}
