@@ -1,5 +1,7 @@
 package io.plurex.pangolin.actors
 
+import assertk.assertThat
+import assertk.assertions.isTrue
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -39,6 +41,19 @@ class ChannelSubsTest {
             subscription1.cancel()
 
             objUnderTest.send(ArbitraryMessage("One"))
+        }
+    }
+
+    @Test
+    fun `handle subscriptions that take too long`() {
+        runBlocking {
+            val objUnderTest = ChannelSubs<ArbitraryMessage>(0, sendTimeoutMillis = 100)
+
+            val subscription1 = objUnderTest.newSub()
+
+            objUnderTest.send(ArbitraryMessage("One"))
+
+            assertThat(subscription1.isClosedForReceive).isTrue()
         }
     }
 }
