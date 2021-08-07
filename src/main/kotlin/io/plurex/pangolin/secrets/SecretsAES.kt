@@ -29,7 +29,7 @@ fun importSecretKey(key: String): SecretKey {
 
 class SecretsAES(
     key: SecretKey,
-    algo: EncryptionAlgo = EncryptionAlgo.AesCbcPadding
+    algo: EncryptionAlgo = EncryptionAlgo.Aes
 ) : SecretsAPI {
 
     private val encryptCipher = algo.encryptCipher(key)
