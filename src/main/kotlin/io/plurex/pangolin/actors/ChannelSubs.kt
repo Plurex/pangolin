@@ -19,13 +19,13 @@ class ChannelSubs<MESSAGE_TYPE>(
 
     private val subscriptions = mutableListOf<Channel<MESSAGE_TYPE>>()
 
-    suspend fun newSub(): Channel<MESSAGE_TYPE> = synchronized{
+    suspend fun newSub(): Channel<MESSAGE_TYPE> = synchronized {
         val channel = Channel<MESSAGE_TYPE>(capacity = capacity)
         subscriptions.add(channel)
         channel
     }
 
-    suspend fun send(message: MESSAGE_TYPE) = synchronized{
+    suspend fun send(message: MESSAGE_TYPE) = synchronized {
         logDebug("Sending $message to ${subscriptions.size} subs")
         val closedChannels = mutableListOf<Channel<MESSAGE_TYPE>>()
         val sendingJobs = mutableListOf<Job>()
@@ -36,22 +36,19 @@ class ChannelSubs<MESSAGE_TYPE>(
                 sendingJobs.add(
                     scope.launch {
                         try {
-                            withTimeout(sendTimeoutMillis){
+                            withTimeout(sendTimeoutMillis) {
                                 subChannel.send(message)
                             }
-                        }
-                        catch (cancelled: CancellationException){
-                            // Do nothing for one that was cancelled already
-                        }
-                        catch (exception: Throwable) {
-                            logger().warn("$name: Sending to subscription exception.", exception)
-                        }finally {
-                            closedChannels.add(subChannel)
+                        } catch (exception: Throwable) {
+                            if (exception !is CancellationException) {
+                                logger().warn("$name: Sending to subscription exception.", exception)
+                            }
                             try {
                                 subChannel.cancel()
                             } catch (e: Exception) {
                                 // Do nothing - best effort has been made
                             }
+                            closedChannels.add(subChannel)
                         }
                     }
                 )

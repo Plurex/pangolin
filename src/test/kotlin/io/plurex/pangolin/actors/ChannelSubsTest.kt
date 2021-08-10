@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isTrue
 import io.plurex.pangolin.random.randString
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.yield
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
