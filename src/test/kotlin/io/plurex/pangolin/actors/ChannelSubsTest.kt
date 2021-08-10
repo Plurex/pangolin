@@ -2,6 +2,7 @@ package io.plurex.pangolin.actors
 
 import assertk.assertThat
 import assertk.assertions.isTrue
+import io.plurex.pangolin.random.randString
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -11,7 +12,7 @@ class ChannelSubsTest {
     @Test
     fun `send and receive messages with multiple subscribers`() {
         runBlocking {
-            val objUnderTest = ChannelSubs<ArbitraryMessage>(10)
+            val objUnderTest = ChannelSubs<ArbitraryMessage>(name = randString(), 10)
 
             val messages = listOf(
                 ArbitraryMessage("One"),
@@ -35,7 +36,7 @@ class ChannelSubsTest {
     @Test
     fun `handle subscriptions that cancel`() {
         runBlocking {
-            val objUnderTest = ChannelSubs<ArbitraryMessage>(10)
+            val objUnderTest = ChannelSubs<ArbitraryMessage>(name = randString(),10)
 
             val subscription1 = objUnderTest.newSub()
             subscription1.cancel()
@@ -47,7 +48,7 @@ class ChannelSubsTest {
     @Test
     fun `handle subscriptions that take too long`() {
         runBlocking {
-            val objUnderTest = ChannelSubs<ArbitraryMessage>(0, sendTimeoutMillis = 100)
+            val objUnderTest = ChannelSubs<ArbitraryMessage>(name = randString(),0, sendTimeoutMillis = 100)
 
             val subscription1 = objUnderTest.newSub()
 

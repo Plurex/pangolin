@@ -1,5 +1,6 @@
 package io.plurex.pangolin.actors
 
+import io.plurex.pangolin.actors.wrapper.ActorWrapper
 import io.plurex.pangolin.logging.HasLogger
 import io.plurex.pangolin.logging.logger
 import kotlinx.coroutines.*
@@ -7,23 +8,24 @@ import kotlinx.coroutines.channels.Channel
 
 
 class ChannelSubs<MESSAGE_TYPE>(
+    private val name: String,
     private val capacity: Int = 10,
     private val scope: CoroutineScope = ScopeParent(),
     private val sendTimeoutMillis: Long = 1000,
-    private val name: String = "Anonymous",
     private val debug: Boolean = false
 ) :
+    ActorWrapper(channelBuffer = 0),
     HasLogger {
 
     private val subscriptions = mutableListOf<Channel<MESSAGE_TYPE>>()
 
-    fun newSub(): Channel<MESSAGE_TYPE> {
+    suspend fun newSub(): Channel<MESSAGE_TYPE> = synchronized{
         val channel = Channel<MESSAGE_TYPE>(capacity = capacity)
         subscriptions.add(channel)
-        return channel
+        channel
     }
 
-    suspend fun send(message: MESSAGE_TYPE) {
+    suspend fun send(message: MESSAGE_TYPE) = synchronized{
         logDebug("Sending $message to ${subscriptions.size} subs")
         val closedChannels = mutableListOf<Channel<MESSAGE_TYPE>>()
         val sendingJobs = mutableListOf<Job>()
@@ -37,12 +39,17 @@ class ChannelSubs<MESSAGE_TYPE>(
                             withTimeout(sendTimeoutMillis){
                                 subChannel.send(message)
                             }
-                        } catch (exception: Throwable) {
+                        }
+                        catch (cancelled: CancellationException){
+                            // Do nothing for one that was cancelled already
+                        }
+                        catch (exception: Throwable) {
                             logger().warn("$name: Sending to subscription exception.", exception)
+                        }finally {
                             closedChannels.add(subChannel)
                             try {
                                 subChannel.cancel()
-                            }catch (e: Exception){
+                            } catch (e: Exception) {
                                 // Do nothing - best effort has been made
                             }
                         }
@@ -56,7 +63,7 @@ class ChannelSubs<MESSAGE_TYPE>(
         subscriptions.removeAll(closedChannels)
     }
 
-    fun closeAllSubs() {
+    suspend fun closeAllSubs() = synchronized {
         subscriptions.forEach { it.close() }
     }
 
