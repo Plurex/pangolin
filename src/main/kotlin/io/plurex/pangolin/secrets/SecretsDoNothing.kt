@@ -6,7 +6,15 @@ class SecretsDoNothing : SecretsAPI {
         return inData
     }
 
+    override fun encrypt(inData: ByteArray): ByteArray {
+        return inData
+    }
+
     override fun decrypt(encrypted: String): String {
+        return encrypted
+    }
+
+    override fun decrypt(encrypted: ByteArray): ByteArray {
         return encrypted
     }
 }
