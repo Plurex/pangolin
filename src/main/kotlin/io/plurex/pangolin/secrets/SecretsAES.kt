@@ -41,9 +41,17 @@ class SecretsAES(
         return String(encoder.encode(encrypted))
     }
 
+    override fun encrypt(inData: ByteArray): ByteArray {
+        return encryptCipher.doFinal(inData)
+    }
+
     override fun decrypt(encrypted: String): String {
         val byteStr = decoder.decode(encrypted.toByteArray(Charsets.UTF_8))
         return String(decryptCipher.doFinal(byteStr))
+    }
+
+    override fun decrypt(encrypted: ByteArray): ByteArray {
+        return decryptCipher.doFinal(encrypted)
     }
 }
 
