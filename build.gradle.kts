@@ -87,6 +87,11 @@ val sourcesJar by tasks.creating(Jar::class) {
     from(sourceSets.getByName("main").allSource)
 }
 
+val testFixturesSourcesJar by tasks.creating(Jar::class) {
+    archiveClassifier.set("sources")
+    from(sourceSets.getByName("testFixtures").allSource)
+}
+
 publishing {
     publications {
         create<MavenPublication>("plurexPangolin") {
@@ -95,6 +100,7 @@ publishing {
             version = version
             from(components["java"])
             artifact(sourcesJar)
+            artifact(testFixturesSourcesJar)
         }
     }
 }
