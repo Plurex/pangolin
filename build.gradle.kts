@@ -118,5 +118,4 @@ artifactory {
             publications("plurexPangolin")
         })
     })
-
 }

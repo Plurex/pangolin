@@ -49,7 +49,11 @@ class ObjectIndexer<MEMBER : Any, PRIMARY_KEY_VALUE : Any>(
         return primaryIndex[primary]
     }
 
-    fun clear(){
+    fun getAll(): List<MEMBER> {
+        return primaryIndex.values.toList()
+    }
+
+    fun clear() {
         primaryIndex.clear()
         indexesByName.values.forEach { it.clear() }
     }
