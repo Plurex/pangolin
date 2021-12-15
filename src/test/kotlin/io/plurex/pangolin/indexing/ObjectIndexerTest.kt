@@ -106,6 +106,20 @@ internal class ObjectIndexerTest {
         assertThat(testObj.getBy(definitionB.name, valueB_2)).containsExactly(widget_two_2)
 
     }
+
+    @Test
+    fun getAll() {
+        val testObj = ObjectIndexer(
+            primaryKeyAccessor = primaryKeyAccessor,
+            listOf(definitionA, definitionB)
+        )
+
+        allWidgets.forEach { testObj.add(it) }
+
+        val actual = testObj.getAll()
+
+        assertThat(actual).containsOnly(*allWidgets.toTypedArray())
+    }
 }
 
 internal data class Widget(
