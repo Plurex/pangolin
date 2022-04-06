@@ -71,7 +71,7 @@ class RobustCoroutineBuilder(
 
     private fun relaunch() {
         val errorHandler = CoroutineExceptionHandler(coroutineErrorHandler)
-        logger.warn("($name): Relaunching with delay of ${retryDelayMillis / 1000} second(s).")
+        logger.debug("($name): Relaunching with delay of ${retryDelayMillis / 1000} second(s).")
         with(scope) {
             launch(errorHandler) {
                 try {
