@@ -39,6 +39,12 @@ dependencies {
     //Config
     implementation("io.github.config4k", "config4k", "0.4.1")
 
+    //OTP
+    api("com.eatthepath:java-otp:0.3.1")
+
+    //Encoding
+    api("commons-codec:commons-codec:1.15")
+
     //Logging
     implementation("org.slf4j", "slf4j-api", slf4jVersion)
 
