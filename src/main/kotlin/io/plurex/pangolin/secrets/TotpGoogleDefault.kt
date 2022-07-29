@@ -1,6 +1,7 @@
 package io.plurex.pangolin.secrets
 
 import com.eatthepath.otp.TimeBasedOneTimePasswordGenerator
+import java.net.URLEncoder
 import java.time.Duration
 import java.time.Instant
 import javax.crypto.SecretKey
@@ -22,10 +23,11 @@ class TotpGoogleDefault : TotpAPI {
     }
 
     override fun buildTotpSetup(label: String, secret: String): TotpSetupData {
+        val encodedLabel = URLEncoder.encode(label, "UTF-8")
         return TotpSetupData(
             secret = secret,
             label = label,
-            url = "otpauth://totp/$label?secret=$secret"
+            url = "otpauth://totp/$encodedLabel?secret=$secret"
         )
     }
 

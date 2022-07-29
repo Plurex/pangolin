@@ -7,6 +7,7 @@ import io.mockk.spyk
 import io.plurex.pangolin.random.randString
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.net.URLEncoder
 import java.time.Instant
 
 internal class TotpGoogleDefaultTest {
@@ -21,13 +22,14 @@ internal class TotpGoogleDefaultTest {
     @Test
     fun generateTotpSetup() {
         val secret = randString()
-        val label = randString()
+        val label = "${randString()} foo @"
+        val encodedLabel = URLEncoder.encode(label, "UTF-8")
         every { testObj.generateSecret() } returns secret
 
         val expected = TotpSetupData(
             secret = secret,
             label = label,
-            url = "otpauth://totp/$label?secret=$secret"
+            url = "otpauth://totp/$encodedLabel?secret=$secret"
         )
 
         val actual = testObj.generateTotpSetup(label)
@@ -39,12 +41,13 @@ internal class TotpGoogleDefaultTest {
     @Test
     fun buildTotpSetup() {
         val secret = randString()
-        val label = randString()
+        val label = "${randString()} foo @"
+        val encodedLabel = URLEncoder.encode(label, "UTF-8")
 
         val expected = TotpSetupData(
             secret = secret,
             label = label,
-            url = "otpauth://totp/$label?secret=$secret"
+            url = "otpauth://totp/$encodedLabel?secret=$secret"
         )
 
         val actual = testObj.buildTotpSetup(label, secret)
