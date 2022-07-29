@@ -18,6 +18,8 @@ interface TotpAPI {
 
     fun generateTotpSetup(label: String): TotpSetupData
 
+    fun buildTotpSetup(label: String, secret: String): TotpSetupData
+
     fun getTotp(secret: String, instant: Instant): Int
 
 }

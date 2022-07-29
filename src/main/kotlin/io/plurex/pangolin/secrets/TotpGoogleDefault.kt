@@ -18,7 +18,10 @@ class TotpGoogleDefault : TotpAPI {
      * Returns data required to setup a new authenticator with a Base32 encoded secret
      */
     override fun generateTotpSetup(label: String): TotpSetupData {
-        val secret = generateSecret()
+        return buildTotpSetup(label, generateSecret())
+    }
+
+    override fun buildTotpSetup(label: String, secret: String): TotpSetupData {
         return TotpSetupData(
             secret = secret,
             label = label,

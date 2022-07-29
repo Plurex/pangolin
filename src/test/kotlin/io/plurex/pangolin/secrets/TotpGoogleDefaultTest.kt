@@ -37,6 +37,23 @@ internal class TotpGoogleDefaultTest {
     }
 
     @Test
+    fun buildTotpSetup() {
+        val secret = randString()
+        val label = randString()
+
+        val expected = TotpSetupData(
+            secret = secret,
+            label = label,
+            url = "otpauth://totp/$label?secret=$secret"
+        )
+
+        val actual = testObj.buildTotpSetup(label, secret)
+
+        assertThat(actual).isEqualTo(expected)
+
+    }
+
+    @Test
     fun getTotp() {
         val secret = "MMVONHZY6HR22PRNEZHZUCYWG267ALN2"
         val instant = Instant.ofEpochMilli(1658919624360)
